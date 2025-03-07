@@ -6,6 +6,12 @@ $info-bg: #ddd;
 $table-border: #ccc;
 $text-dark: #333;
 $text-light: #777;
+$file-cleaner-border: #ddd;
+$file-cleaner-header-bg: #f7f7f7;
+$file-cleaner-row-hover: #f0f0f0;
+$file-cleaner-folder-color: #0073aa;
+$file-cleaner-delete-btn-bg: #e74c3c;
+$file-cleaner-delete-btn-hover-bg: #c0392b;
 
 // Scope styles only inside File Cleaner plugin
 #fileScanner, #infoBoxes, #resultsTable {
@@ -53,17 +59,18 @@ $text-light: #777;
 }
 
 #resultsTable {
-    display: block !important;  // 🔥 Force visibility
+    display: block !important; 
     margin-top: 20px;
 }
 
-.folder-toggle {
-    background: none;
-    border: none;
+.folder-toggle {   
     cursor: pointer;
+    user-select: none;
     font-size: 14px;
+    font-weight: bold;
     margin-right: 5px;
-    user-select: none; 
+    display: inline-block;
+    width: 14px;
 }
 
 .folder-toggle:hover {
@@ -75,12 +82,91 @@ $text-light: #777;
     margin-right: 5px;
 }
 
-.folder-toggle::before {
-    content: "▶ "; // 🔥 Default collapsed icon
+.file-cleaner-table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 10px;
+}
+
+.file-cleaner-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    thead {
+        background: $file-cleaner-header-bg;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+
+        th {
+            text-align: left;
+            padding: 12px;
+            font-weight: 600;
+            border-bottom: 2px solid $file-cleaner-border;
+        }
+    }
+
+    tbody {
+        tr {
+            border-bottom: 1px solid $file-cleaner-border;
+            transition: background 0.3s ease;
+
+            &:hover {
+                background: $file-cleaner-row-hover;
+            }
+        }
+
+        td {
+            padding: 10px;
+            vertical-align: middle;
+            white-space: nowrap;
+
+            &:nth-child(2), &:nth-child(3) {
+                text-align: right;
+            }
+        }
+
+        /* 🔥 Folder Toggle Styling */
+        .file-cleaner-folder-toggle {
+            cursor: pointer;
+            color: $file-cleaner-folder-color;
+            font-size: 14px;
+            font-weight: bold;
+            margin-right: 5px;
+
+            &:hover {
+                color: darken($file-cleaner-folder-color, 10%);
+            }
+        }
+    }
+}
+
+/* 🔥 Delete Button */
+.file-cleaner-delete-btn {
+    background: $file-cleaner-delete-btn-bg;
+    color: white;
+    border: none;
+    padding: 6px 10px;
     font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+        background: $file-cleaner-delete-btn-hover-bg;
+    }
 }
 
-.folder-toggle[aria-expanded="true"]::before {
-    content: "▼ "; // 🔥 Open folder indicator
-}
+/* 🔥 Folder Alignment */
+.file-cleaner-folder-name {
+    display: flex;
+    align-items: center;
 
+    .file-cleaner-folder-toggle {
+        margin-right: 8px;
+    }
+}

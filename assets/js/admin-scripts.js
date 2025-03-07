@@ -126,51 +126,95 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
     
-        // 🔥 Insert table with nested file structure
         resultsTable.innerHTML = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>📁 File/Folder Name</th>
-                        <th>📏 Size</th>
-                        <th>📍 Location</th>
-                        <th>📅 Last Modified</th>
-                        <th>📂 Type</th>
-                        <th>⚡ Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${generateFileTree(data.files)}
-                </tbody>
-            </table>
+            <div class="file-cleaner-table-container">
+                <table class="file-cleaner-table">
+                    <thead>
+                        <tr>
+                            <th>File/Folder Name</th>
+                            <th>Size</th>
+                            <th>Location</th>
+                            <th>Last Modified</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${generateFileTree(data.files)}
+                    </tbody>
+                </table>
+            </div>
         `;
     
-        // 🔥 Add DOUBLE-CLICK event listener for folders
+        // 🔥 Add SINGLE CLICK event listener for folders (Double-click removed)
         document.querySelectorAll(".folder-toggle").forEach(button => {
-            button.addEventListener("dblclick", () => {
-                let folderId = button.getAttribute("data-folder");
-                let folderRows = document.querySelectorAll(`.folder-${folderId}`);
-    
-                if (folderRows.length === 0) {
-                    console.warn(`⚠️ No subfiles found for folder: ${folderId}`);
-                    return;
-                }
-    
-                let isExpanded = folderRows[0]?.style.display !== "none"; // Check if folder is currently open
-                folderRows.forEach(row => {
-                    row.style.display = isExpanded ? "none" : "table-row"; // Toggle visibility
-                });
-    
-                // 🔄 Toggle folder icon only
-                button.textContent = isExpanded ? "📂" : "📁";
+            button.addEventListener("click", (event) => {
+                event.preventDefault();
+                toggleFolder(button);
             });
         });
     
-        console.log("📋 Table Content Updated:", resultsTable.innerHTML);
+        console.log("Table Content Updated:", resultsTable.innerHTML);
     }
     
+    let toggleQueue = new Set(); // 🔥 Prevents rapid toggling
+
     
+    function toggleFolder(button) {
+        let folderId = button.getAttribute("data-folder");
     
+        if (!folderId) {
+            console.warn("⚠️ Missing folderId for button:", button);
+            return;
+        }
+    
+        // 🔥 FIX: Escape folderId to prevent invalid CSS selectors
+        let safeFolderId = CSS.escape(folderId.trim());
+    
+        // 🔥 Prevent invalid folder selectors from breaking querySelectorAll
+        if (!safeFolderId || safeFolderId === "-") {
+            console.error("❌ Invalid folder ID:", folderId);
+            return;
+        }
+    
+        let folderRows = document.querySelectorAll(`.folder-${safeFolderId}`);
+    
+        if (folderRows.length === 0) {
+            console.warn(`⚠️ No subfiles found for folder: ${folderId}`);
+            return;
+        }
+    
+        let isExpanded = button.getAttribute("aria-expanded") === "true";
+    
+        // 🔥 Prevent rapid spam clicking (disable for 250ms)
+        button.disabled = true;
+        setTimeout(() => button.disabled = false, 250);
+    
+        // 🚀 Optimize rendering to prevent lag
+        requestAnimationFrame(() => {
+            folderRows.forEach(row => {
+                row.style.display = isExpanded ? "none" : "table-row";
+            });
+    
+            // 🔄 Toggle folder icon & state
+            button.setAttribute("aria-expanded", !isExpanded);
+            button.textContent = isExpanded ? "▶" : "▼";
+        });
+    
+        // 🔥 Ensure closing a parent folder collapses all its subfolders
+        if (isExpanded) {
+            document.querySelectorAll(`[data-folder^="${safeFolderId}-"]`).forEach(sub => {
+                let subRows = document.querySelectorAll(`.folder-${CSS.escape(sub.getAttribute("data-folder"))}`);
+                subRows.forEach(row => (row.style.display = "none"));
+                sub.setAttribute("aria-expanded", "false");
+                sub.textContent = "▶"; // 🔄 Reset icon for closed subfolders
+            });
+        }
+    }
+    
+
+    
+       
     function formatSize(size) {
         if (size > 1e9) return (size / 1e9).toFixed(2) + " GB";
         if (size > 1e6) return (size / 1e6).toFixed(2) + " MB";
@@ -196,12 +240,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 fileMap[folder].forEach(file => {
                     let folderId = file.location.replace(/\//g, "-"); // Unique ID for toggle
                     let paddingLeft = 20 + depth * 15; // 🔥 Indent based on depth level
+                    let isFolder = file.type === "Folder"; // 🔥 Check if it's a folder
     
                     rows += `
                         <tr class="${depth > 0 ? `folder-${folder.replace(/\//g, "-")}` : ""}" style="${depth > 0 ? "display: none;" : ""}">
                             <td style="padding-left: ${paddingLeft}px;">
-                                ${file.type === "Folder" 
-                                    ? `<span class="folder-toggle" data-folder="${folderId}">📂</span> <span>${file.name}</span>` 
+                                ${isFolder 
+                                    ? `<span class="folder-toggle" data-folder="${folderId}" aria-expanded="false">▶</span> <span class="folder-name">${file.name}</span>` 
                                     : `<span class="file-icon">📄</span> ${file.name}`}
                             </td>
                             <td>${formatSize(file.size)}</td>
@@ -217,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     `;
     
                     // 🔥 Recursively add subfolders/files
-                    if (file.type === "Folder") {
+                    if (isFolder) {
                         rows += buildTree(file.location, depth + 1);
                     }
                 });
@@ -228,7 +273,6 @@ document.addEventListener("DOMContentLoaded", function () {
     
         return buildTree("/");
     }
-    
     
     
     
