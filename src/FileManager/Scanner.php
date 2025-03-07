@@ -5,6 +5,7 @@ class Scanner {
     
     public function __construct() {
         add_action('wp_ajax_fsc_scan_files', [$this, 'scanAjaxHandler']);
+        add_action('wp_ajax_nopriv_fsc_scan_files', [$this, 'scanAjaxHandler']); // Allow non-logged-in users (optional)
     }
 
     public function scanDirectory(string $dir): int {
@@ -31,7 +32,6 @@ class Scanner {
         return $size;
     }
 
-    // AJAX handler
     public function scanAjaxHandler(): void {
         check_ajax_referer('fsc_scan_nonce', 'nonce');
 

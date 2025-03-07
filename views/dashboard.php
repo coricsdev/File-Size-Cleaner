@@ -1,17 +1,19 @@
 <div class="wrap">
     <h1><?php esc_html_e('File Cleaner Dashboard', 'file-size-cleaner'); ?></h1>
 
-    <div x-data="fileScanner">
+    <div id="fileScanner">
         <button 
-            x-on:click="startScan()"
-            x-bind:disabled="isScanning"
+            id="startScanBtn"
             class="button-primary"
         >
             <?php esc_html_e('Start Scan', 'file-size-cleaner'); ?>
         </button>
 
-        <div x-show="isScanning" class="progress-bar">
-            <div x-bind:style="{ width: scanProgress + '%' }"></div>
+        <div id="progressBar" class="progress-bar" style="display: none;">
+            <div id="progressBarFill" style="width: 0%;"></div>
         </div>
+
+        <p><?php esc_html_e('Total Size: ', 'file-size-cleaner'); ?> 
+           <span id="totalSize">0</span> bytes</p>
     </div>
 </div>
