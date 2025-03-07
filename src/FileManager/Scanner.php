@@ -35,9 +35,53 @@ class Scanner {
     public function scanAjaxHandler(): void {
         check_ajax_referer('fsc_scan_nonce', 'nonce');
 
-        $dir = ABSPATH;
-        $size = $this->scanDirectory($dir);
+        $rootDirectory = ABSPATH; // 🔥 Scan the full WordPress root directory
+        $files = $this->getFilesInDirectory($rootDirectory);
 
-        wp_send_json_success(['size' => $size]);
+        $totalSize = array_sum(array_column($files, 'size')); // Calculate total size
+
+        wp_send_json_success([
+            'totalSize' => $totalSize,
+            'files' => $files
+        ]);
+        
     }
+
+    private function getFilesInDirectory(string $dir): array {
+        $results = [];
+        
+        if (!is_dir($dir)) {
+            return [];
+        }
+    
+        $files = scandir($dir);
+    
+        foreach ($files as $file) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+    
+            $filePath = $dir . DIRECTORY_SEPARATOR . $file;
+            $relativePath = str_replace(ABSPATH, '', realpath($filePath)); // 🔥 Correct path formatting
+            $fileType = is_dir($filePath) ? 'Folder' : 'File';
+            $size = is_file($filePath) ? filesize($filePath) : $this->getDirectorySize($filePath);
+    
+            $results[] = [
+                'name' => $file,
+                'size' => $size,
+                'location' => '/' . trim($relativePath, '/'), // 🔥 Ensure proper path format
+                'modified' => filemtime($filePath), // 🔥 Correct timestamp
+                'type' => $fileType,
+                'deletable' => !is_dir($filePath) // 🔥 Only allow file deletions
+            ];
+    
+            // 🔥 If it's a directory, scan it recursively
+            if (is_dir($filePath)) {
+                $results = array_merge($results, $this->getFilesInDirectory($filePath));
+            }
+        }
+        return $results;
+    }
+    
+    
 }

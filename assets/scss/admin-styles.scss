@@ -1,18 +1,18 @@
+// Colors
 $primary-color: #0073aa;
 $secondary-color: #00a0d2;
+$danger-color: #d9534f;
+$info-bg: #ddd;
+$table-border: #ccc;
+$text-dark: #333;
+$text-light: #777;
 
-.button-primary {
-    background: $primary-color;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 4px;
-    transition: background 0.3s;
-
-    &:hover {
-        background: darken($primary-color, 10%);
-    }
+// Scope styles only inside File Cleaner plugin
+#fileScanner, #infoBoxes, #resultsTable {
+    all: unset;
 }
 
+// Progress Bar
 .progress-bar {
     width: 100%;
     background: #f3f3f3;
@@ -23,6 +23,36 @@ $secondary-color: #00a0d2;
         height: 10px;
         background: $secondary-color;
         width: 0;
-        transition: width 0.5s ease;
+        transition: width 0.5s ease-in-out;
     }
+}
+
+// Info Box
+.info-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+
+    .info-box {
+        padding: 10px 15px;
+        background: #ddd;
+        border-radius: 5px;
+        font-weight: bold;
+        min-width: 180px;
+    }
+}
+
+// Table
+#resultsTable table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+}
+
+#resultsTable {
+    display: block !important;  // 🔥 Force visibility
+    margin-top: 20px;
 }
