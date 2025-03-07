@@ -117,23 +117,16 @@ document.addEventListener("DOMContentLoaded", function () {
         
     });
 
-    
     function displayResults(data) {
         console.log("✅ Displaying scan results...");
     
-        // 🔥 Always re-fetch resultsTable from the DOM
         let resultsTable = document.getElementById("resultsTable");
-    
         if (!resultsTable) {
-            console.error("❌ resultsTable is STILL missing from the DOM!");
+            console.error("❌ resultsTable is missing from the DOM!");
             return;
         }
     
-        console.log("📂 Files in response:", data.files);
-    
-        // 🔥 Force visibility (in case styles are hiding it)
-        resultsTable.style.display = "block";
-    
+        // 🔥 Insert table with nested file structure
         resultsTable.innerHTML = `
             <table>
                 <thead>
@@ -147,12 +140,73 @@ document.addEventListener("DOMContentLoaded", function () {
                     </tr>
                 </thead>
                 <tbody>
-                    ${data.files.map(file => `
-                        <tr>
-                            <td>${file.name}</td>
+                    ${generateFileTree(data.files)}
+                </tbody>
+            </table>
+        `;
+    
+        // 🔥 Add DOUBLE-CLICK event listener for folders
+        document.querySelectorAll(".folder-toggle").forEach(button => {
+            button.addEventListener("dblclick", () => {
+                let folderId = button.getAttribute("data-folder");
+                let folderRows = document.querySelectorAll(`.folder-${folderId}`);
+    
+                if (folderRows.length === 0) {
+                    console.warn(`⚠️ No subfiles found for folder: ${folderId}`);
+                    return;
+                }
+    
+                let isExpanded = folderRows[0]?.style.display !== "none"; // Check if folder is currently open
+                folderRows.forEach(row => {
+                    row.style.display = isExpanded ? "none" : "table-row"; // Toggle visibility
+                });
+    
+                // 🔄 Toggle folder icon only
+                button.textContent = isExpanded ? "📂" : "📁";
+            });
+        });
+    
+        console.log("📋 Table Content Updated:", resultsTable.innerHTML);
+    }
+    
+    
+    
+    function formatSize(size) {
+        if (size > 1e9) return (size / 1e9).toFixed(2) + " GB";
+        if (size > 1e6) return (size / 1e6).toFixed(2) + " MB";
+        if (size > 1e3) return (size / 1e3).toFixed(2) + " KB";
+        return size + " bytes";
+    }
+
+    function generateFileTree(files) {
+        let fileMap = {};
+    
+        // 🔥 Group files by their parent directory
+        files.forEach(file => {
+            let parent = file.location.substring(0, file.location.lastIndexOf("/")) || "/";
+            if (!fileMap[parent]) fileMap[parent] = [];
+            fileMap[parent].push(file);
+        });
+    
+        // 🔥 Recursive function to build the tree structure
+        function buildTree(folder, depth = 0) {
+            let rows = "";
+    
+            if (fileMap[folder]) {
+                fileMap[folder].forEach(file => {
+                    let folderId = file.location.replace(/\//g, "-"); // Unique ID for toggle
+                    let paddingLeft = 20 + depth * 15; // 🔥 Indent based on depth level
+    
+                    rows += `
+                        <tr class="${depth > 0 ? `folder-${folder.replace(/\//g, "-")}` : ""}" style="${depth > 0 ? "display: none;" : ""}">
+                            <td style="padding-left: ${paddingLeft}px;">
+                                ${file.type === "Folder" 
+                                    ? `<span class="folder-toggle" data-folder="${folderId}">📂</span> <span>${file.name}</span>` 
+                                    : `<span class="file-icon">📄</span> ${file.name}`}
+                            </td>
                             <td>${formatSize(file.size)}</td>
                             <td>${file.location}</td>
-                            <td>${file.modified ? new Date(file.modified * 1000).toLocaleString() : 'Unknown'}</td> <!-- 🔥 Convert timestamp -->
+                            <td>${file.modified ? new Date(file.modified * 1000).toLocaleString() : 'Unknown'}</td>
                             <td>${file.type}</td>
                             <td>
                                 ${file.deletable 
@@ -160,20 +214,23 @@ document.addEventListener("DOMContentLoaded", function () {
                                     : `<span class="disabled-action">🚫 Not Editable</span>`}
                             </td>
                         </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-        console.log("📋 Table Content Updated:", resultsTable.innerHTML);
+                    `;
+    
+                    // 🔥 Recursively add subfolders/files
+                    if (file.type === "Folder") {
+                        rows += buildTree(file.location, depth + 1);
+                    }
+                });
+            }
+    
+            return rows;
+        }
+    
+        return buildTree("/");
     }
     
     
-
-    function formatSize(size) {
-        if (size > 1e9) return (size / 1e9).toFixed(2) + " GB";
-        if (size > 1e6) return (size / 1e6).toFixed(2) + " MB";
-        if (size > 1e3) return (size / 1e3).toFixed(2) + " KB";
-        return size + " bytes";
-    }
+    
+    
     
 });

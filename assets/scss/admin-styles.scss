@@ -56,3 +56,31 @@ $text-light: #777;
     display: block !important;  // 🔥 Force visibility
     margin-top: 20px;
 }
+
+.folder-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 5px;
+    user-select: none; 
+}
+
+.folder-toggle:hover {
+    opacity: 0.8;
+}
+
+.file-icon {
+    color: gray;
+    margin-right: 5px;
+}
+
+.folder-toggle::before {
+    content: "▶ "; // 🔥 Default collapsed icon
+    font-size: 12px;
+}
+
+.folder-toggle[aria-expanded="true"]::before {
+    content: "▼ "; // 🔥 Open folder indicator
+}
+

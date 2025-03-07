@@ -61,8 +61,8 @@ class Scanner {
                 continue;
             }
     
-            $filePath = $dir . DIRECTORY_SEPARATOR . $file;
-            $relativePath = str_replace(ABSPATH, '', realpath($filePath)); // 🔥 Correct path formatting
+            $filePath = realpath($dir . DIRECTORY_SEPARATOR . $file);
+            $relativePath = str_replace(ABSPATH, '', $filePath); // 🔥 Convert to relative path
             $fileType = is_dir($filePath) ? 'Folder' : 'File';
             $size = is_file($filePath) ? filesize($filePath) : $this->getDirectorySize($filePath);
     
@@ -82,6 +82,7 @@ class Scanner {
         }
         return $results;
     }
+    
     
     
 }
