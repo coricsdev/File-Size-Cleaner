@@ -1,0 +1,28 @@
+$primary-color: #0073aa;
+$secondary-color: #00a0d2;
+
+.button-primary {
+    background: $primary-color;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background 0.3s;
+
+    &:hover {
+        background: darken($primary-color, 10%);
+    }
+}
+
+.progress-bar {
+    width: 100%;
+    background: #f3f3f3;
+    border-radius: 5px;
+    margin-top: 10px;
+    
+    div {
+        height: 10px;
+        background: $secondary-color;
+        width: 0;
+        transition: width 0.5s ease;
+    }
+}
