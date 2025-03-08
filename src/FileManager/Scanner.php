@@ -49,7 +49,7 @@ class Scanner {
 
     private function getFilesInDirectory(string $dir): array {
         $results = [];
-        
+    
         if (!is_dir($dir)) {
             return [];
         }
@@ -66,23 +66,22 @@ class Scanner {
             $fileType = is_dir($filePath) ? 'Folder' : 'File';
             $size = is_file($filePath) ? filesize($filePath) : $this->getDirectorySize($filePath);
     
+            // 🔥 Recursively scan subfolders and store them inside 'subfiles'
+            $subfiles = is_dir($filePath) ? $this->getFilesInDirectory($filePath) : [];
+    
             $results[] = [
                 'name' => $file,
                 'size' => $size,
                 'location' => '/' . trim($relativePath, '/'), // 🔥 Ensure proper path format
                 'modified' => filemtime($filePath), // 🔥 Correct timestamp
                 'type' => $fileType,
-                'deletable' => !is_dir($filePath) // 🔥 Only allow file deletions
+                'deletable' => !is_dir($filePath), // 🔥 Only allow file deletions
+                'subfiles' => $subfiles // 🔥 Store nested subfiles properly!
             ];
-    
-            // 🔥 If it's a directory, scan it recursively
-            if (is_dir($filePath)) {
-                $results = array_merge($results, $this->getFilesInDirectory($filePath));
-            }
         }
+    
         return $results;
     }
-    
-    
+
     
 }

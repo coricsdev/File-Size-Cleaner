@@ -2,6 +2,9 @@
     <h1><?php esc_html_e('File Cleaner Dashboard', 'file-size-cleaner'); ?></h1>
 
     <div id="fileScanner">
+        <div id="loadingOverlay">
+            <div class="spinner"></div>
+        </div>
         <button id="startScanBtn" class="button-primary">Start Scan</button>
         
         <div id="progressBar" class="progress-bar" style="display: none;">

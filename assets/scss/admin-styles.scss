@@ -170,3 +170,65 @@ $file-cleaner-delete-btn-hover-bg: #c0392b;
         margin-right: 8px;
     }
 }
+.folder-toggle.loading {
+    cursor: wait;
+    opacity: 0.6;
+}
+
+// 🔥 Proper Indentation for Nested Folders
+tr[data-depth="0"] td:first-child { padding-left: 20px; }
+tr[data-depth="1"] td:first-child { padding-left: 40px; }
+tr[data-depth="2"] td:first-child { padding-left: 60px; }
+tr[data-depth="3"] td:first-child { padding-left: 80px; }
+tr[data-depth="4"] td:first-child { padding-left: 100px; }
+tr[data-depth="5"] td:first-child { padding-left: 120px; }
+tr[data-depth="6"] td:first-child { padding-left: 140px; }
+tr[data-depth="7"] td:first-child { padding-left: 160px; }
+tr[data-depth="8"] td:first-child { padding-left: 180px; }
+tr[data-depth="9"] td:first-child { padding-left: 200px; }
+
+// Hide subfolders when parent is collapsed
+tr[data-hidden="true"] {
+    display: none !important;
+}
+
+
+
+/* 🔥 Loading Overlay */
+#loadingOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    display: none; /* Hidden by default */
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #ccc;
+    border-top: 5px solid #0073aa;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.file-cleaner-table-container {
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.loading .file-cleaner-table-container {
+    opacity: 0.5; /* Gray out table during loading */
+    pointer-events: none; /* Prevent interactions */
+}
