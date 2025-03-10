@@ -232,3 +232,15 @@ tr[data-hidden="true"] {
     opacity: 0.5; /* Gray out table during loading */
     pointer-events: none; /* Prevent interactions */
 }
+
+.disabled-action {
+    color: #888;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    padding: 6px 10px;
+    background: #f3f3f3;
+    border-radius: 4px;
+    user-select: none;
+    cursor: not-allowed;
+}

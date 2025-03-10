@@ -213,18 +213,40 @@ document.addEventListener("DOMContentLoaded", function () {
         return size + " bytes";
     }
 
+    function isWordPressCoreFile(filePath) {
+        const coreDirectories = [
+            "/wp-admin", 
+            "/wp-includes"
+        ];
+    
+        const coreFiles = [
+            "/index.php",
+            "/wp-config.php",
+            "/wp-settings.php",
+            "/wp-load.php",
+            "/wp-cron.php",
+            "/xmlrpc.php",
+            "/license.txt",
+            "/readme.html"
+        ];
+    
+        return coreDirectories.some(dir => filePath.startsWith(dir)) || coreFiles.includes(filePath);
+    }
+    
+
     // 🔥 Generate File Tree
     function generateFileTree(files = [], parentFolder = "", depth = 0) {
         if (!Array.isArray(files) || files.length === 0) {
             return "";
         }
-
+    
         let rows = "";
         files.forEach(file => {
             let folderId = file.location.replace(/\//g, "-");
             let isFolder = file.type === "Folder";
             let paddingLeft = 20 + depth * 15;
-
+            let isCoreFile = isWordPressCoreFile(file.location); // Check if file is a WP core file
+    
             rows += `
                 <tr class="file-row folder-${folderId}" data-depth="${depth}" data-parent="${parentFolder}" style="display: ${depth === 0 ? "table-row" : "none"};">
                     <td style="padding-left: ${paddingLeft}px;">
@@ -236,17 +258,22 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${file.location}</td>
                     <td>${file.modified ? new Date(file.modified * 1000).toLocaleString() : 'Unknown'}</td>
                     <td>${file.type}</td>
-                    <td>${file.deletable ? `<button class="delete-btn" data-path="${file.path}">❌ Delete</button>` : `<span class="disabled-action">🚫 Not Editable</span>`}</td>
+                    <td>
+                        ${isCoreFile 
+                            ? `<span class="disabled-action">🚫 Not Editable</span>` 
+                            : `<button class="delete-btn" data-path="${file.path}">❌ Delete</button>`}
+                    </td>
                 </tr>
             `;
-
+    
             if (isFolder && Array.isArray(file.subfiles) && file.subfiles.length > 0) {
                 rows += generateFileTree(file.subfiles, folderId, depth + 1);
             }
         });
-
+    
         return rows;
     }
+    
     
     
     
