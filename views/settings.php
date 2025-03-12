@@ -35,27 +35,6 @@ $options = array_merge($defaults, $options);
             do_settings_sections('file-size-cleaner-settings');
             submit_button('Save Settings');
         ?>
-        
-        <h2>🔍 Scan Settings</h2>
-        <table class="form-table">
-            <tr>
-                <th><label for="scan_mode">Scan Mode</label></th>
-                <td>
-                    <select name="fsc_settings[scan_mode]" id="scan_mode">
-                        <option value="basic" <?php selected($options['scan_mode'], 'basic'); ?>>Basic Scan (WP Folders Only)</option>
-                        <option value="full" <?php selected($options['scan_mode'], 'full'); ?>>Full Scan (Entire WordPress Site)</option>
-                        <option value="custom" <?php selected($options['scan_mode'], 'custom'); ?>>Custom Scan (Select Folders)</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <th><label for="excluded_files">Excluded Files & Folders</label></th>
-                <td>
-                    <textarea name="fsc_settings[excluded_files]" id="excluded_files" rows="4" cols="50"><?php echo esc_textarea($options['excluded_files']); ?></textarea>
-                    <p class="description">Enter file/folder paths to exclude from scans. One per line.</p>
-                </td>
-            </tr>
-        </table>
 
         <h2>⚙️ Automation & Scheduling</h2>
         <table class="form-table">
