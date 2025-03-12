@@ -26,16 +26,37 @@ if (!file_exists($autoloadPath)) {
 require_once $autoloadPath;
 
 use FileSizeCleaner\Core\Plugin;
+use FileSizeCleaner\Admin\AdminMenu;
+use FileSizeCleaner\Admin\Settings;
+use FileSizeCleaner\Admin\Dashboard;
 
+/**
+ * Initializes the plugin properly
+ */
 function run_file_size_cleaner() {
-    $plugin = new Plugin();
-    $plugin->run();
-}
+    static $pluginInstance = null;
 
-// ✅ Use the public getter method to safely access $scheduler
+    if ($pluginInstance === null) {
+        $pluginInstance = new Plugin();
+        $pluginInstance->run();
+    }
+
+    // ✅ Register Admin Menu with Singleton
+    static $adminMenuInstance = null;
+    if ($adminMenuInstance === null) {
+        $settings = new Settings();
+        $dashboard = new Dashboard();
+        $adminMenuInstance = AdminMenu::getInstance($dashboard, $settings);
+        $adminMenuInstance->register();
+    }
+}
+add_action('plugins_loaded', 'run_file_size_cleaner', 9); // ✅ Ensures it runs only once
+
+// ✅ Properly Register Deactivation Hook
 register_deactivation_hook(__FILE__, function () {
     $plugin = new Plugin();
-    $plugin->getScheduler()->removeScheduledCleanup();
+    
+    if (method_exists($plugin, 'getScheduler')) {
+        $plugin->getScheduler()->removeScheduledCleanup();
+    }
 });
-
-add_action('plugins_loaded', 'run_file_size_cleaner');

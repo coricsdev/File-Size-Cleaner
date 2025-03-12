@@ -46,15 +46,15 @@ add_action('admin_enqueue_scripts', 'fsc_enqueue_admin_scripts');
     </script>
 
     <div id="fileScanner">
-        <div id="loadingOverlay">
-            <div class="spinner"></div>
-        </div>
         <button id="startScanBtn" class="button-primary">Start Scan</button>
         
         <div id="progressBar" class="progress-bar" style="display: none;">
             <div id="progressBarFill" style="width: 0%;"></div>
         </div>
         <p id="scanPercentage" style="font-weight: bold; display: none;">0%</p>
+        <p id="scanCompleteMessage" style="font-weight: bold; color: #0073aa; display: none;">
+            ✅ Scan Complete! Your files are now listed below.
+        </p>
 
         <!-- 🔥 Add Total Size Here -->
         <p><?php esc_html_e('Total Size: ', 'file-size-cleaner'); ?> 

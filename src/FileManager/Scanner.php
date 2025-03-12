@@ -85,6 +85,27 @@ class Scanner {
         return $results;
     }
 
+    private function isCoreFile($path) {
+        $coreDirs = [
+            ABSPATH . 'wp-admin',
+            ABSPATH . 'wp-includes',
+            ABSPATH . 'index.php',
+            ABSPATH . 'wp-config.php',
+            ABSPATH . 'wp-settings.php',
+            get_theme_root() . '/' . get_template(), // 🔥 Prevent active theme deletion
+            WP_PLUGIN_DIR // 🔥 Prevent plugin folder deletion
+        ];
+    
+        foreach ($coreDirs as $coreDir) {
+            if (strpos(realpath($path), realpath($coreDir)) === 0) {
+                return true;
+            }
+        }
+    
+        return false;
+    }
+    
+
     /**
      * Handles the AJAX request for deleting files or folders.
      */
@@ -152,26 +173,7 @@ class Scanner {
         return rmdir($folder);
     }
 
-    /**
-     * Prevent deletion of WordPress core files.
-     */
-    private function isCoreFile($path) {
-        $coreDirs = [
-            ABSPATH . 'wp-admin',
-            ABSPATH . 'wp-includes',
-            ABSPATH . 'index.php',
-            ABSPATH . 'wp-config.php',
-            ABSPATH . 'wp-settings.php'
-        ];
-
-        foreach ($coreDirs as $coreDir) {
-            if (strpos(realpath($path), realpath($coreDir)) === 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    
 
     
 }

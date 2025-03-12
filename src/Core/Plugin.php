@@ -22,8 +22,12 @@ class Plugin {
 
     public function __construct() {
         global $wpdb;
+
+        $dashboard = new Dashboard();
+        $settings = new Settings();
+
         $this->assets = new Assets();
-        $this->adminMenu = new AdminMenu(new Dashboard(), new Settings());
+        $this->adminMenu = AdminMenu::getInstance($dashboard, $settings); // ✅ Use Singleton Method
         $this->scanner = new Scanner();
         $this->cleaner = new Cleaner();
         $this->database = new DatabaseOptimizer($wpdb);
@@ -37,7 +41,6 @@ class Plugin {
         $this->scheduler->register();
     }
 
-    // Add a public method to access $scheduler
     public function getScheduler(): Scheduler {
         return $this->scheduler;
     }

@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
         console.log("✅ Start scan button clicked.");
     
-        progressBar.style.display = "block"; // ✅ Ensure Progress Bar is shown
+        progressBar.style.display = "block";
         progressBarFill.style.width = "0%";
         scanPercentageElement.style.display = "block";
         scanPercentageElement.textContent = "0%";
@@ -55,12 +55,12 @@ document.addEventListener("DOMContentLoaded", function () {
             scanPercentageElement.textContent = progress + "%";
         }, 500);
     
-        fetch(window.ajaxurl, {
+        fetch(fsc_data.ajax_url, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: new URLSearchParams({
                 action: "fsc_scan_files",
-                nonce: window.fsc_scan_nonce
+                nonce: fsc_data.scan_nonce
             })
         })
         .then(response => response.json())
@@ -73,16 +73,17 @@ document.addEventListener("DOMContentLoaded", function () {
     
             if (data.success && data.data) {
                 fileCache = data.data.files;
+                totalSizeElement.textContent = formatSize(data.data.totalSize);
+                displayResults(fileCache);
     
-                if (totalSizeElement) {
-                    totalSizeElement.textContent = formatSize(data.data.totalSize);
-                    console.log("📏 Total Size Updated:", formatSize(data.data.totalSize));
-                }
-    
-                displayResults(data.data.files);
+                // 🔥 Hide progress bar & percentage after scan completes
+                setTimeout(() => {
+                    progressBar.style.display = "none";
+                    scanPercentageElement.style.display = "none";
+                    showScanCompleteMessage();
+                }, 1000); // Delay for smoother UI transition
             } else {
                 console.error("❌ Scan failed or no data received:", data);
-                document.getElementById("resultsTable").innerHTML = "<tr><td colspan='6'>No files found.</td></tr>";
             }
     
             isScanning = false;
@@ -93,6 +94,21 @@ document.addEventListener("DOMContentLoaded", function () {
             isScanning = false;
         });
     });
+    
+    // 🔥 Function to Show Scan Complete Message
+    function showScanCompleteMessage() {
+        let scanCompleteMessage = document.getElementById("scanCompleteMessage");
+        if (!scanCompleteMessage) {
+            scanCompleteMessage = document.createElement("p");
+            scanCompleteMessage.id = "scanCompleteMessage";
+            scanCompleteMessage.style.fontWeight = "bold";
+            scanCompleteMessage.style.color = "#0073aa";
+            scanCompleteMessage.textContent = "✅ Scan Complete! Your files are now listed below.";
+            scanPercentageElement.insertAdjacentElement("afterend", scanCompleteMessage);
+        }
+        scanCompleteMessage.style.display = "block";
+    }
+    
     
     
 
@@ -267,7 +283,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>
                         ${isCoreFile || !file.path 
                             ? `<span class="disabled-action">🚫 Not Editable</span>` 
-                            : `<button class="delete-btn" data-path="${file.path}">❌ Delete</button>`
+                            : `<button class="delete-btn" data-path="${file.path}">Delete</button>`
                         }
                     </td>
                 </tr>
@@ -362,7 +378,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("✅ File deleted successfully:", filePath);
                 let row = deleteButton.closest("tr");
                 if (row) row.remove();
-            } else {
+                showSuccessMessage("✅ File successfully deleted!");
+                refreshTableAfterDelete();
+            }else {
                 console.error("❌ File deletion failed:", data);
                 alert("Error: " + (data.message || "Unknown error"));
             }
@@ -372,6 +390,18 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Error: Unable to delete file.");
         });
     }
+    
+    function showSuccessMessage(message) {
+        let msgBox = document.createElement("div");
+        msgBox.className = "success-message";
+        msgBox.innerText = message;
+        document.body.appendChild(msgBox);
+        setTimeout(() => msgBox.remove(), 3000);
+    }
+    
+    function refreshTableAfterDelete() {
+        document.getElementById("startScanBtn").click(); // Re-trigger the scan
+    }   
     
     
     

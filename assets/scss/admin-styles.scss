@@ -293,3 +293,52 @@ tr[data-hidden="true"] {
 .confirm-btn:hover {
     background: #c0392b;
 }
+
+// 🔥 Delete Button Styles
+.delete-btn {
+    background: #e74c3c;  // Red background
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 4px;  // Rounded corners
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    display: inline-block;
+    text-align: center;
+    min-width: 80px;
+
+    &:hover {
+        background: darken(#e74c3c, 10%); // Darker red on hover
+    }
+
+    &:active {
+        background: darken(#e74c3c, 20%); // Even darker when clicked
+    }
+}
+
+.wrap h2 {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.form-table th {
+    width: 200px;
+    text-align: left;
+}
+
+.form-table td {
+    padding: 10px;
+}
+
+textarea {
+    width: 100%;
+}
+
+button.button-primary {
+    background: #0073aa;
+    color: white;
+    padding: 10px 20px;
+    font-size: 14px;
+}
