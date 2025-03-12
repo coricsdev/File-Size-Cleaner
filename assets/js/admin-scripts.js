@@ -1,12 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("✅ Vanilla JS script loaded.");
 
-    
-
     if (!document.getElementById("fileScanner")) {
         console.warn("⚠️ File Cleaner page not detected. Skipping script.");
         return;
     }
+
+    // ✅ Check if fsc_data is available
+    if (typeof fsc_data === 'undefined') {
+        console.error("❌ fsc_data is NOT defined. Ensure wp_localize_script is correctly loaded.");
+        return;
+    }
+    
+    console.log("✅ fsc_data Loaded:", fsc_data);
 
     const startScanBtn = document.getElementById("startScanBtn");
     const progressBar = document.getElementById("progressBar");
@@ -259,9 +265,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${file.modified ? new Date(file.modified * 1000).toLocaleString() : 'Unknown'}</td>
                     <td>${file.type}</td>
                     <td>
-                        ${isCoreFile 
+                        ${isCoreFile || !file.path 
                             ? `<span class="disabled-action">🚫 Not Editable</span>` 
-                            : `<button class="delete-btn" data-path="${file.path}">❌ Delete</button>`}
+                            : `<button class="delete-btn" data-path="${file.path}">❌ Delete</button>`
+                        }
                     </td>
                 </tr>
             `;
@@ -273,6 +280,100 @@ document.addEventListener("DOMContentLoaded", function () {
     
         return rows;
     }
+    
+    // Event delegation for delete buttons
+    document.addEventListener("click", function (event) {
+    if (event.target.classList.contains("delete-btn")) {
+        let filePath = event.target.getAttribute("data-path"); // ✅ Correctly fetch file path
+        console.log("🛠️ Delete button clicked for:", filePath);
+
+        if (!filePath || filePath.trim() === "") {
+            console.error("❌ ERROR: File path is missing from delete button.");
+            alert("Error: Cannot delete. File path is missing.");
+            return;
+        }
+
+        showDeleteConfirmation(filePath, event.target);
+    }
+});
+
+    
+
+    // Show delete confirmation popup
+    function showDeleteConfirmation(filePath, deleteButton) {
+        if (!filePath || filePath.trim() === "") {
+            console.error("❌ Invalid file path detected.");
+            alert("Error: Cannot delete. File path is missing.");
+            return;
+        }
+    
+        console.log("🛠️ Showing delete confirmation for:", filePath);
+    
+        let confirmation = document.createElement("div");
+        confirmation.id = "deleteConfirmation";
+        confirmation.innerHTML = `
+            <div class="delete-popup">
+                <h3>Confirm Deletion</h3>
+                <p>Are you sure you want to permanently delete <strong>${filePath}</strong>? <br>
+                <span style="color: red;">This action cannot be undone!</span> <br><br>
+                We recommend backing up your files before proceeding.</p>
+                <div class="popup-actions">
+                    <button id="cancelDelete" class="cancel-btn">Cancel</button>
+                    <button id="confirmDelete" class="confirm-btn">Delete Permanently</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(confirmation);
+    
+        document.getElementById("cancelDelete").addEventListener("click", function () {
+            confirmation.remove();
+        });
+    
+        document.getElementById("confirmDelete").addEventListener("click", function () {
+            confirmation.remove();
+            deleteFile(filePath, deleteButton);
+        });
+    }
+    
+    
+
+    // Perform the actual deletion
+    function deleteFile(filePath, deleteButton) {
+        if (!filePath) {
+            console.error("❌ No file path provided for deletion.");
+            alert("Error: No file path provided.");
+            return;
+        }
+    
+        console.log("🛠️ Sending Delete Request for:", filePath);
+    
+        fetch(fsc_data.ajax_url, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+                action: "fsc_delete_file",
+                nonce: fsc_data.delete_nonce,
+                path: filePath
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log("✅ File deleted successfully:", filePath);
+                let row = deleteButton.closest("tr");
+                if (row) row.remove();
+            } else {
+                console.error("❌ File deletion failed:", data);
+                alert("Error: " + (data.message || "Unknown error"));
+            }
+        })
+        .catch(error => {
+            console.error("❌ Error deleting file:", error);
+            alert("Error: Unable to delete file.");
+        });
+    }
+    
+    
     
     
     
