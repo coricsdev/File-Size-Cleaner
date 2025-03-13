@@ -1,18 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("✅ Vanilla JS script loaded.");
+    console.log("Vanilla JS script loaded.");
 
     if (!document.getElementById("fileScanner")) {
         console.warn("⚠️ File Cleaner page not detected. Skipping script.");
         return;
     }
 
-    // ✅ Check if fsc_data is available
+    // Check if fsc_data is available
     if (typeof fsc_data === 'undefined') {
-        console.error("❌ fsc_data is NOT defined. Ensure wp_localize_script is correctly loaded.");
+        console.error("fsc_data is NOT defined. Ensure wp_localize_script is correctly loaded.");
         return;
     }
     
-    console.log("✅ fsc_data Loaded:", fsc_data);
+    console.log("fsc_data Loaded:", fsc_data);
 
     const startScanBtn = document.getElementById("startScanBtn");
     const progressBar = document.getElementById("progressBar");
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let fileCache = {}; // Store full directory structure in memory
 
     if (!startScanBtn || !progressBar || !progressBarFill) {
-        console.error("❌ Required elements not found in DOM.");
+        console.error("Required elements not found in DOM.");
         return;
     }
     // Declare progressInterval at the top
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (isScanning) return;
         isScanning = true;
     
-        console.log("✅ Start scan button clicked.");
+        console.log("Start scan button clicked.");
     
         progressBar.style.display = "block";
         progressBarFill.style.width = "0%";
@@ -69,33 +69,33 @@ document.addEventListener("DOMContentLoaded", function () {
             progressBarFill.style.width = "100%";
             scanPercentageElement.textContent = "100%";
     
-            console.log("✅ Data Received:", data.data);
+            console.log("Data Received:", data.data);
     
             if (data.success && data.data) {
                 fileCache = data.data.files;
                 totalSizeElement.textContent = formatSize(data.data.totalSize);
                 displayResults(fileCache);
     
-                // 🔥 Hide progress bar & percentage after scan completes
+                // Hide progress bar & percentage after scan completes
                 setTimeout(() => {
                     progressBar.style.display = "none";
                     scanPercentageElement.style.display = "none";
                     showScanCompleteMessage();
                 }, 1000); // Delay for smoother UI transition
             } else {
-                console.error("❌ Scan failed or no data received:", data);
+                console.error("Scan failed or no data received:", data);
             }
     
             isScanning = false;
         })
         .catch(error => {
             clearInterval(progressInterval);
-            console.error("❌ Error during scan:", error);
+            console.error("Error during scan:", error);
             isScanning = false;
         });
     });
     
-    // 🔥 Function to Show Scan Complete Message
+    // Function to Show Scan Complete Message
     function showScanCompleteMessage() {
         let scanCompleteMessage = document.getElementById("scanCompleteMessage");
         if (!scanCompleteMessage) {
@@ -109,17 +109,13 @@ document.addEventListener("DOMContentLoaded", function () {
         scanCompleteMessage.style.display = "block";
     }
     
-    
-    
-
-
-    // 🔥 Display Results Function
+    // Display Results Function
     function displayResults(data) {
-        console.log("✅ Displaying scan results...");
+        console.log("Displaying scan results...");
         
         let resultsTable = document.getElementById("resultsTable");
         if (!resultsTable) {
-            console.error("❌ resultsTable is missing from the DOM!");
+            console.error("resultsTable is missing from the DOM!");
             return;
         }
     
@@ -149,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         `;
     
-        // ✅ Ensure folder toggles work after rendering
+        //Ensure folder toggles work after rendering
         document.querySelectorAll(".folder-toggle").forEach(button => {
             button.addEventListener("click", function (event) {
                 event.preventDefault();
@@ -157,11 +153,11 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     
-        console.log("✅ Table Content Updated:", resultsTable.innerHTML);
+        console.log("Table Content Updated:", resultsTable.innerHTML);
     }
 
     
-    let expandedFolders = new Set(); // 🔥 Store opened folders
+    let expandedFolders = new Set(); //Store opened folders
     
     function toggleFolder(button) {
         let folderId = button.getAttribute("data-folder");
@@ -170,14 +166,14 @@ document.addEventListener("DOMContentLoaded", function () {
         let isExpanded = button.getAttribute("aria-expanded") === "true";
     
         if (isExpanded) {
-            // 🔥 Close the folder and ALL of its nested subfolders
+            //Close the folder and ALL of its nested subfolders
             collapseAllNestedFolders(folderId);
             button.setAttribute("aria-expanded", "false");
             button.innerHTML = "▶";
             return;
         }
     
-        // 🔥 Open only the direct child elements
+        //Open only the direct child elements
         let folderPath = folderId.replace(/-/g, "/");
         let parentFolder = findFolderInCache(fileCache, folderPath);
     
@@ -191,7 +187,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     
-        // 🔥 Show child rows when opening
+        //Show child rows when opening
         document.querySelectorAll(`tr[data-parent="${folderId}"]`).forEach(row => {
             row.style.display = "table-row";
         });
@@ -200,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
         button.innerHTML = "▼";
     }
     
-    // 🔥 Recursively Collapse ALL Nested Subfolders
+    //Recursively Collapse ALL Nested Subfolders
     function collapseAllNestedFolders(parentFolderId) {
         let allNestedRows = document.querySelectorAll(`tr[data-parent^="${parentFolderId}"]`);
 
@@ -215,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // 🔥 Search for folder in Cache
+    //Search for folder in Cache
     function findFolderInCache(files, path) {
         for (let file of files) {
             if (file.location === path) return file;
@@ -227,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return null;
     }
 
-    // 🔥 Format File Sizes
+    //Format File Sizes
     function formatSize(size) {
         if (size > 1e9) return (size / 1e9).toFixed(2) + " GB";
         if (size > 1e6) return (size / 1e6).toFixed(2) + " MB";
@@ -256,7 +252,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
 
-    // 🔥 Generate File Tree
+    // Generate File Tree
     function generateFileTree(files = [], parentFolder = "", depth = 0) {
         if (!Array.isArray(files) || files.length === 0) {
             return "";
@@ -282,7 +278,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${file.type}</td>
                     <td>
                         ${isCoreFile || !file.path 
-                            ? `<span class="disabled-action">🚫 Not Editable</span>` 
+                            ? `<span class="disabled-action">Not Editable</span>` 
                             : `<button class="delete-btn" data-path="${file.path}">Delete</button>`
                         }
                     </td>
@@ -300,11 +296,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // Event delegation for delete buttons
     document.addEventListener("click", function (event) {
     if (event.target.classList.contains("delete-btn")) {
-        let filePath = event.target.getAttribute("data-path"); // ✅ Correctly fetch file path
-        console.log("🛠️ Delete button clicked for:", filePath);
+        let filePath = event.target.getAttribute("data-path"); // Correctly fetch file path
+        console.log("Delete button clicked for:", filePath);
 
         if (!filePath || filePath.trim() === "") {
-            console.error("❌ ERROR: File path is missing from delete button.");
+            console.error("ERROR: File path is missing from delete button.");
             alert("Error: Cannot delete. File path is missing.");
             return;
         }
@@ -318,12 +314,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // Show delete confirmation popup
     function showDeleteConfirmation(filePath, deleteButton) {
         if (!filePath || filePath.trim() === "") {
-            console.error("❌ Invalid file path detected.");
+            console.error("Invalid file path detected.");
             alert("Error: Cannot delete. File path is missing.");
             return;
         }
     
-        console.log("🛠️ Showing delete confirmation for:", filePath);
+        console.log("Showing delete confirmation for:", filePath);
     
         let confirmation = document.createElement("div");
         confirmation.id = "deleteConfirmation";
@@ -356,7 +352,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Perform the actual deletion
     function deleteFile(filePath, deleteButton) {
         if (!filePath) {
-            console.error("❌ No file path provided for deletion.");
+            console.error("No file path provided for deletion.");
             alert("Error: No file path provided.");
             return;
         }
@@ -375,18 +371,18 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                console.log("✅ File deleted successfully:", filePath);
+                console.log("File deleted successfully:", filePath);
                 let row = deleteButton.closest("tr");
                 if (row) row.remove();
-                showSuccessMessage("✅ File successfully deleted!");
+                showSuccessMessage("File successfully deleted!");
                 refreshTableAfterDelete();
             }else {
-                console.error("❌ File deletion failed:", data);
+                console.error("File deletion failed:", data);
                 alert("Error: " + (data.message || "Unknown error"));
             }
         })
         .catch(error => {
-            console.error("❌ Error deleting file:", error);
+            console.error("Error deleting file:", error);
             alert("Error: Unable to delete file.");
         });
     }

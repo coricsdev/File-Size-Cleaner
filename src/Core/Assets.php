@@ -9,7 +9,7 @@ class Assets {
     }
 
     public function enqueue_admin_assets(): void {
-        // ✅ Load admin scripts
+        //Load admin scripts
         wp_enqueue_script(
             'file-cleaner-admin-scripts', 
             plugin_dir_url(__FILE__) . '../../assets/js/admin-scripts.js', 
@@ -18,7 +18,7 @@ class Assets {
             true // Load in the FOOTER
         );
 
-        // ✅ Load styles
+        //Load styles
         wp_enqueue_style(
             'file-cleaner-admin-style', 
             plugin_dir_url(__FILE__) . '../../assets/css/admin-styles.css', 
@@ -32,7 +32,7 @@ class Assets {
         <script>
             window.ajaxurl = "<?php echo admin_url('admin-ajax.php'); ?>";
             window.fsc_scan_nonce = "<?php echo wp_create_nonce('fsc_scan_nonce'); ?>";
-            console.log("✅ Inline JS variables loaded.");
+            console.log("Inline JS variables loaded.");
         </script>
         <?php
     }

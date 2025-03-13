@@ -1,9 +1,9 @@
 <?php
 
 function fsc_enqueue_admin_scripts() {
-    error_log("✅ fsc_enqueue_admin_scripts() is running!"); // Debugging
+    error_log("fsc_enqueue_admin_scripts() is running!"); // Debugging
 
-    // ✅ Register the script correctly
+    //Register the script correctly
     wp_register_script(
         'file-cleaner-admin',
         plugins_url('../../assets/js/admin-scripts.js', __FILE__), // Ensure correct path
@@ -12,7 +12,7 @@ function fsc_enqueue_admin_scripts() {
         true
     );
 
-    // ✅ Ensure script is enqueued
+    //Ensure script is enqueued
     wp_enqueue_script('file-cleaner-admin');
 
     $fsc_data = [
@@ -21,11 +21,11 @@ function fsc_enqueue_admin_scripts() {
         'delete_nonce' => wp_create_nonce('fsc_delete_nonce')
     ];
 
-    // ✅ Use wp_add_inline_script() instead of wp_localize_script()
+    //Use wp_add_inline_script() instead of wp_localize_script()
     $inline_script = 'var fsc_data = ' . json_encode($fsc_data) . ';';
     wp_add_inline_script('file-cleaner-admin', $inline_script, 'before');
 
-    error_log("✅ fsc_data: " . print_r($fsc_data, true)); // Check in debug.log
+    error_log("fsc_data: " . print_r($fsc_data, true)); // Check in debug.log
 }
 add_action('admin_enqueue_scripts', 'fsc_enqueue_admin_scripts');
 
@@ -42,7 +42,7 @@ add_action('admin_enqueue_scripts', 'fsc_enqueue_admin_scripts');
             'scan_nonce'   => wp_create_nonce('fsc_scan_nonce'),
             'delete_nonce' => wp_create_nonce('fsc_delete_nonce')
         ]); ?>;
-        console.log("✅ fsc_data manually injected:", fsc_data);
+        console.log("fsc_data manually injected:", fsc_data);
     </script>
 
     <div id="fileScanner">
@@ -56,13 +56,13 @@ add_action('admin_enqueue_scripts', 'fsc_enqueue_admin_scripts');
             ✅ Scan Complete! Your files are now listed below.
         </p>
 
-        <!-- 🔥 Add Total Size Here -->
+        <!-- Add Total Size Here -->
         <p><?php esc_html_e('Total Size: ', 'file-size-cleaner'); ?> 
             <span id="totalSize">0</span> bytes
         </p>
 
         <!-- Ensure elements exist -->
         <div id="infoBoxes"></div>
-        <div id="resultsTable"></div> <!-- 🔥 This ensures resultsTable exists -->
+        <div id="resultsTable"></div> <!-- This ensures resultsTable exists -->
     </div>
 </div>

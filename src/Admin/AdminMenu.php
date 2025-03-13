@@ -25,13 +25,13 @@ class AdminMenu {
     }
 
     public function addAdminMenu(): void {
-        // ✅ Ensure menu is not duplicated
+        // Ensure menu is not duplicated
         global $submenu;
         if (isset($submenu['file-size-cleaner'])) {
             return;
         }
 
-        // ✅ Add Main "File Cleaner" Menu
+        //Add Main "File Cleaner" Menu
         add_menu_page(
             __('File Cleaner', 'file-size-cleaner'),
             __('File Cleaner', 'file-size-cleaner'),
@@ -41,7 +41,7 @@ class AdminMenu {
             'dashicons-trash'
         );
 
-        // ✅ Add ONLY ONE Settings Page
+        // Add ONLY ONE Settings Page
         add_submenu_page(
             'file-size-cleaner',
             __('Settings', 'file-size-cleaner'),

@@ -27,7 +27,7 @@ class Plugin {
         $settings = new Settings();
 
         $this->assets = new Assets();
-        $this->adminMenu = AdminMenu::getInstance($dashboard, $settings); // ✅ Use Singleton Method
+        $this->adminMenu = AdminMenu::getInstance($dashboard, $settings); //Use Singleton Method
         $this->scanner = new Scanner();
         $this->cleaner = new Cleaner();
         $this->database = new DatabaseOptimizer($wpdb);

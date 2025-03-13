@@ -130,7 +130,7 @@ $file-cleaner-delete-btn-hover-bg: #c0392b;
             }
         }
 
-        /* 🔥 Folder Toggle Styling */
+        /* Folder Toggle Styling */
         .file-cleaner-folder-toggle {
             cursor: pointer;
             color: $file-cleaner-folder-color;
@@ -145,7 +145,7 @@ $file-cleaner-delete-btn-hover-bg: #c0392b;
     }
 }
 
-/* 🔥 Delete Button */
+/* Delete Button */
 .file-cleaner-delete-btn {
     background: $file-cleaner-delete-btn-bg;
     color: white;
@@ -161,7 +161,7 @@ $file-cleaner-delete-btn-hover-bg: #c0392b;
     }
 }
 
-/* 🔥 Folder Alignment */
+/* Folder Alignment */
 .file-cleaner-folder-name {
     display: flex;
     align-items: center;
@@ -175,7 +175,7 @@ $file-cleaner-delete-btn-hover-bg: #c0392b;
     opacity: 0.6;
 }
 
-// 🔥 Proper Indentation for Nested Folders
+// Proper Indentation for Nested Folders
 tr[data-depth="0"] td:first-child { padding-left: 20px; }
 tr[data-depth="1"] td:first-child { padding-left: 40px; }
 tr[data-depth="2"] td:first-child { padding-left: 60px; }
@@ -192,9 +192,7 @@ tr[data-hidden="true"] {
     display: none !important;
 }
 
-
-
-/* 🔥 Loading Overlay */
+/* Loading Overlay */
 #loadingOverlay {
     position: absolute;
     top: 0;
@@ -294,7 +292,7 @@ tr[data-hidden="true"] {
     background: #c0392b;
 }
 
-// 🔥 Delete Button Styles
+//Delete Button Styles
 .delete-btn {
     background: #e74c3c;  // Red background
     color: white;
